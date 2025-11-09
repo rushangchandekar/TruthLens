@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
-import { FileText, TrendingUp, ArrowLeft, AlertTriangle, CheckCircle2, XCircle } from "lucide-react";
+import { ThumbsUp, ThumbsDown, Bookmark, History, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Progress } from "@/components/ui/progress";
 
 interface Evidence {
   title: string;
@@ -25,139 +27,146 @@ interface ResultsDashboardProps {
   onReset: () => void;
 }
 
-const getVerdictColor = (verdict: string) => {
+const getVerdictInfo = (verdict: string) => {
   const normalized = verdict.toLowerCase();
-  if (normalized.includes("true") || normalized.includes("verified")) {
+  if (normalized.includes("true")) {
     return {
-      bg: "bg-verified/10",
-      border: "border-verified/30",
-      text: "text-verified",
-      icon: CheckCircle2
+      label: "Largely True",
+      color: "text-verified",
+      bgColor: "bg-gradient-to-br from-verified/20 to-official/20"
     };
   }
-  if (normalized.includes("false") || normalized.includes("debunked")) {
+  if (normalized.includes("false")) {
     return {
-      bg: "bg-false/10",
-      border: "border-false/30",
-      text: "text-false",
-      icon: XCircle
+      label: "False",
+      color: "text-false",
+      bgColor: "bg-gradient-to-br from-false/20 to-destructive/20"
     };
   }
   return {
-    bg: "bg-unverified/10",
-    border: "border-unverified/30",
-    text: "text-unverified",
-    icon: AlertTriangle
+    label: "Unverified",
+    color: "text-unverified",
+    bgColor: "bg-gradient-to-br from-unverified/20 to-social/20"
   };
 };
 
-const getConfidenceWidth = (level: string) => {
+const getConfidenceValue = (level: string) => {
   const normalized = level.toLowerCase();
-  if (normalized === "high") return "w-full";
-  if (normalized === "medium") return "w-2/3";
-  return "w-1/3";
+  if (normalized === "high") return 95;
+  if (normalized === "medium") return 65;
+  return 35;
 };
 
 export const ResultsDashboard = ({ data, onReset }: ResultsDashboardProps) => {
-  const verdictStyle = getVerdictColor(data.verdict);
-  const VerdictIcon = verdictStyle.icon;
+  const verdictInfo = getVerdictInfo(data.verdict);
+  const confidenceValue = getConfidenceValue(data.confidence_level);
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen py-12 px-6"
+      className="min-h-screen bg-background"
     >
-      <div className="max-w-7xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <Button
-            onClick={onReset}
-            variant="ghost"
-            className="text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            New Investigation
-          </Button>
-          <div className="text-sm text-muted-foreground">
-            Debate Rounds: {data.debate_rounds}
+      {/* Header */}
+      <header className="border-b border-border/50 bg-background/80 backdrop-blur-xl sticky top-0 z-50">
+        <div className="container mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-official flex items-center justify-center">
+              <span className="text-white font-bold text-sm">T</span>
+            </div>
+            <span className="text-xl font-semibold text-foreground">TruthLens</span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="sm" className="text-foreground/80">
+              <History className="w-4 h-4 mr-2" />
+              History
+            </Button>
+            <Avatar className="w-9 h-9">
+              <AvatarFallback className="bg-gradient-to-br from-primary to-official text-white text-sm">
+                U
+              </AvatarFallback>
+            </Avatar>
           </div>
         </div>
+      </header>
 
-        {/* Query Card */}
+      <div className="container mx-auto px-6 py-8 max-w-7xl space-y-6">
+        {/* Claim Card */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.1 }}
-          className="bg-card/50 backdrop-blur-xl border border-border/50 rounded-2xl p-6"
+          className="bg-card/40 backdrop-blur-sm border border-border/50 rounded-2xl p-6"
         >
-          <div className="text-sm text-muted-foreground mb-2">Investigating Claim</div>
-          <h1 className="text-2xl md:text-3xl font-bold">{data.query}</h1>
+          <div className="text-sm text-muted-foreground mb-2">Claim</div>
+          <h1 className="text-2xl md:text-3xl font-semibold text-foreground">
+            "{data.query}"
+          </h1>
         </motion.div>
 
-        {/* Verdict Banner */}
+        {/* Verdict Section */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className={`${verdictStyle.bg} ${verdictStyle.border} border backdrop-blur-xl rounded-2xl p-8 space-y-6`}
+          className={`${verdictInfo.bgColor} backdrop-blur-sm border border-border/30 rounded-2xl p-8 space-y-6`}
         >
-          {/* Verdict Badge */}
-          <div className="flex items-center gap-4">
-            <div className={`p-3 rounded-xl ${verdictStyle.bg} ${verdictStyle.border} border`}>
-              <VerdictIcon className={`h-8 w-8 ${verdictStyle.text}`} />
+          <div className="flex items-start justify-between">
+            <div className="space-y-4 flex-1">
+              {/* Verdict Badge */}
+              <div className="flex items-center gap-4">
+                <div className="p-3 rounded-xl bg-background/50 backdrop-blur-sm">
+                  <div className={`w-8 h-8 rounded-full ${verdictInfo.color.replace('text-', 'bg-')}`} />
+                </div>
+                <div>
+                  <div className="text-sm text-muted-foreground mb-1">Verdict</div>
+                  <div className={`text-4xl font-bold ${verdictInfo.color}`}>
+                    {verdictInfo.label}
+                  </div>
+                </div>
+              </div>
+
+              {/* AI Synthesis */}
+              <div className="pt-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <Sparkles className="w-5 h-5 text-social" />
+                  <span className="text-sm font-medium text-foreground">AI Synthesis</span>
+                </div>
+                <p className="text-foreground/90 leading-relaxed">
+                  {data.synthesis_explanation}
+                </p>
+              </div>
             </div>
-            <div>
-              <div className="text-sm text-muted-foreground mb-1">Verdict</div>
-              <div className={`text-3xl font-bold ${verdictStyle.text}`}>
-                {data.verdict}
+
+            {/* Right side - Save button and Confidence */}
+            <div className="flex flex-col items-end gap-6 ml-6">
+              <Button variant="outline" className="bg-background/50 backdrop-blur-sm border-border/50">
+                <Bookmark className="w-4 h-4 mr-2" />
+                Save
+              </Button>
+
+              <div className="text-right space-y-2">
+                <div className="text-sm text-muted-foreground">Confidence</div>
+                <div className="text-3xl font-bold text-verified">{confidenceValue}%</div>
+                <Progress value={confidenceValue} className="w-32 h-2" />
               </div>
             </div>
           </div>
-
-          {/* Confidence Meter */}
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Confidence Level</span>
-              <span className="font-medium">{data.confidence_level}</span>
-            </div>
-            <div className="h-3 bg-background/50 rounded-full overflow-hidden">
-              <div
-                className={`h-full ${verdictStyle.bg} ${verdictStyle.border} border-r-2 transition-all ${getConfidenceWidth(
-                  data.confidence_level
-                )}`}
-              />
-            </div>
-          </div>
-
-          {/* AI Synthesis */}
-          <div className="pt-4 border-t border-border/30">
-            <div className="text-sm text-muted-foreground mb-2">AI Synthesis</div>
-            <p className="text-foreground leading-relaxed">
-              {data.synthesis_explanation}
-            </p>
-          </div>
         </motion.div>
 
-        {/* Dual-Stream Evidence */}
+        {/* Evidence Columns */}
         <div className="grid md:grid-cols-2 gap-6">
-          {/* Official Evidence */}
+          {/* Supporting Evidence */}
           <motion.div
             initial={{ x: -20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ delay: 0.3 }}
             className="space-y-4"
           >
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2.5 rounded-lg bg-official/10 border border-official/30">
-                <FileText className="h-5 w-5 text-official" />
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold">Fact-Finder Evidence</h2>
-                <p className="text-sm text-muted-foreground">
-                  Official sources & research
-                </p>
-              </div>
+            <div className="flex items-center gap-3">
+              <ThumbsUp className="h-6 w-6 text-verified" />
+              <h2 className="text-2xl font-semibold text-foreground">Supporting Evidence</h2>
             </div>
 
             <div className="space-y-3">
@@ -167,41 +176,29 @@ export const ResultsDashboard = ({ data, onReset }: ResultsDashboardProps) => {
                   initial={{ y: 10, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.4 + index * 0.1 }}
-                  className="bg-card/30 backdrop-blur-xl border border-official/20 rounded-xl p-4 hover:border-official/40 transition-all group"
+                  className="bg-card/40 backdrop-blur-sm border border-border/30 rounded-xl p-5 space-y-3"
                 >
-                  <div className="flex items-start justify-between mb-2">
-                    <h3 className="font-semibold text-sm group-hover:text-official transition-colors">
-                      {item.title}
-                    </h3>
-                    <span className="text-xs px-2 py-1 rounded-md bg-official/10 text-official border border-official/20">
-                      {item.type}
-                    </span>
-                  </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {item.snippet}
+                  <p className="text-foreground/90 leading-relaxed">
+                    "{item.snippet}"
                   </p>
+                  <a href="#" className="text-sm text-official hover:underline block">
+                    {item.title}
+                  </a>
                 </motion.div>
               ))}
             </div>
           </motion.div>
 
-          {/* Social Evidence */}
+          {/* Contradictory Evidence */}
           <motion.div
             initial={{ x: 20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ delay: 0.3 }}
             className="space-y-4"
           >
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2.5 rounded-lg bg-social/10 border border-social/30">
-                <TrendingUp className="h-5 w-5 text-social" />
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold">Pattern-Detector Signals</h2>
-                <p className="text-sm text-muted-foreground">
-                  Social sentiment & trends
-                </p>
-              </div>
+            <div className="flex items-center gap-3">
+              <ThumbsDown className="h-6 w-6 text-false" />
+              <h2 className="text-2xl font-semibold text-foreground">Contradictory Evidence</h2>
             </div>
 
             <div className="space-y-3">
@@ -211,19 +208,14 @@ export const ResultsDashboard = ({ data, onReset }: ResultsDashboardProps) => {
                   initial={{ y: 10, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.4 + index * 0.1 }}
-                  className="bg-card/30 backdrop-blur-xl border border-social/20 rounded-xl p-4 hover:border-social/40 transition-all group"
+                  className="bg-card/40 backdrop-blur-sm border border-border/30 rounded-xl p-5 space-y-3"
                 >
-                  <div className="flex items-start justify-between mb-2">
-                    <h3 className="font-semibold text-sm group-hover:text-social transition-colors">
-                      {item.title}
-                    </h3>
-                    <span className="text-xs px-2 py-1 rounded-md bg-social/10 text-social border border-social/20">
-                      {item.type}
-                    </span>
-                  </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {item.snippet}
+                  <p className="text-foreground/90 leading-relaxed">
+                    "{item.snippet}"
                   </p>
+                  <a href="#" className="text-sm text-unverified hover:underline block">
+                    {item.title} ({item.type})
+                  </a>
                 </motion.div>
               ))}
             </div>
