@@ -115,7 +115,7 @@ const SignUp = () => {
               {/* Sign Up Button */}
               <Button 
                 type="submit"
-                className="w-full h-12 bg-gradient-to-r from-official to-social hover:opacity-90 text-white font-medium text-base"
+                className="w-full h-12 bg-gradient-to-r from-primary to-official hover:opacity-90 text-white font-medium text-base"
               >
                 Sign Up
               </Button>
