@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 export const Header = () => {
   return (
@@ -14,12 +15,16 @@ export const Header = () => {
 
         {/* Auth Buttons */}
         <div className="flex items-center gap-3">
-          <Button variant="ghost" className="text-foreground/80 hover:text-foreground">
-            Sign In
-          </Button>
-          <Button className="bg-gradient-to-r from-primary to-official hover:opacity-90 text-white">
-            Sign Up
-          </Button>
+          <Link to="/login">
+            <Button variant="ghost" className="text-foreground/80 hover:text-foreground">
+              Sign In
+            </Button>
+          </Link>
+          <Link to="/signup">
+            <Button className="bg-gradient-to-r from-primary to-official hover:opacity-90 text-white">
+              Sign Up
+            </Button>
+          </Link>
         </div>
       </div>
     </header>
