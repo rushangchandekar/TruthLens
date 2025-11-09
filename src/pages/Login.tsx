@@ -1,17 +1,39 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Lock, Eye } from "lucide-react";
+import { signIn } from "@/lib/supabase";
+import { useToast } from "@/hooks/use-toast";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle login logic here
+    setIsLoading(true);
+
+    const { error } = await signIn(email, password);
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Error signing in",
+        description: error.message,
+      });
+      setIsLoading(false);
+    } else {
+      toast({
+        title: "Success!",
+        description: "You've been signed in successfully.",
+      });
+      navigate("/");
+    }
   };
 
   return (
@@ -75,9 +97,10 @@ const Login = () => {
             {/* Log In Button */}
             <Button 
               type="submit"
+              disabled={isLoading}
               className="w-full h-12 bg-gradient-to-r from-primary to-official hover:opacity-90 text-white font-medium text-base"
             >
-              Log In
+              {isLoading ? "Signing in..." : "Log In"}
             </Button>
           </form>
 

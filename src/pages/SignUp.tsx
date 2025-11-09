@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff } from "lucide-react";
+import { signUp } from "@/lib/supabase";
+import { useToast } from "@/hooks/use-toast";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -11,10 +13,40 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle signup logic here
+    
+    if (password !== confirmPassword) {
+      toast({
+        variant: "destructive",
+        title: "Passwords don't match",
+        description: "Please make sure your passwords match.",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+
+    const { error } = await signUp(email, password);
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Error signing up",
+        description: error.message,
+      });
+      setIsLoading(false);
+    } else {
+      toast({
+        title: "Success!",
+        description: "Your account has been created successfully.",
+      });
+      navigate("/");
+    }
   };
 
   return (
@@ -115,9 +147,10 @@ const SignUp = () => {
               {/* Sign Up Button */}
               <Button 
                 type="submit"
+                disabled={isLoading}
                 className="w-full h-12 bg-gradient-to-r from-primary to-official hover:opacity-90 text-white font-medium text-base"
               >
-                Sign Up
+                {isLoading ? "Creating account..." : "Sign Up"}
               </Button>
             </form>
 
