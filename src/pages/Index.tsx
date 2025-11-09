@@ -1,12 +1,78 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import { Hero } from "@/components/Hero";
+import { AgentDebate } from "@/components/AgentDebate";
+import { ResultsDashboard } from "@/components/ResultsDashboard";
+
+type AppState = "idle" | "processing" | "complete";
+
+const MOCK_DATA = {
+  status: "complete",
+  query: "Does E20 fuel damage car engines?",
+  verdict: "Unverified",
+  confidence_level: "Medium",
+  synthesis_explanation:
+    "While social media is saturated with anecdotal reports of engine knocking, no official government or peer-reviewed automotive study currently confirms widespread acute damage from E20 in compatible vehicles.",
+  debate_rounds: 2,
+  evidence: {
+    official: [
+      {
+        title: "Ministry of Petroleum Advisory 2025",
+        type: "Government",
+        snippet:
+          "Lists compatible vehicle classes; no explicit warning for new engines.",
+      },
+      {
+        title: "SAE Technical Paper #4022",
+        type: "Academic",
+        snippet:
+          "Long-term corrosion studies are ongoing; preliminary results neutral.",
+      },
+    ],
+    social: [
+      {
+        title: "Viral Mechanic Reel (2.1M views)",
+        type: "Instagram",
+        snippet: "Claims fuel pumps are failing in 2018-2020 models.",
+      },
+      {
+        title: "r/CarsIndia Megathread",
+        type: "Reddit",
+        snippet:
+          "400+ users reporting lower mileage and increased engine noise.",
+      },
+    ],
+  },
+};
 
 const Index = () => {
+  const [appState, setAppState] = useState<AppState>("idle");
+  const [currentClaim, setCurrentClaim] = useState("");
+
+  const handleInvestigate = (claim: string) => {
+    setCurrentClaim(claim);
+    setAppState("processing");
+
+    // Simulate agent debate time (6 seconds to match progress bar)
+    setTimeout(() => {
+      setAppState("complete");
+    }, 6000);
+  };
+
+  const handleReset = () => {
+    setAppState("idle");
+    setCurrentClaim("");
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-background text-foreground">
+      {appState === "idle" && <Hero onInvestigate={handleInvestigate} />}
+      {appState === "processing" && <AgentDebate />}
+      {appState === "complete" && (
+        <ResultsDashboard
+          data={{ ...MOCK_DATA, query: currentClaim }}
+          onReset={handleReset}
+        />
+      )}
     </div>
   );
 };
