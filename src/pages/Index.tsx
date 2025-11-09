@@ -1,5 +1,9 @@
 import { useState } from "react";
+import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
+import { Features } from "@/components/Features";
+import { Testimonials } from "@/components/Testimonials";
+import { Footer } from "@/components/Footer";
 import { AgentDebate } from "@/components/AgentDebate";
 import { ResultsDashboard } from "@/components/ResultsDashboard";
 
@@ -65,7 +69,15 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {appState === "idle" && <Hero onInvestigate={handleInvestigate} />}
+      {appState === "idle" && (
+        <>
+          <Header />
+          <Hero onInvestigate={handleInvestigate} />
+          <Features />
+          <Testimonials />
+          <Footer />
+        </>
+      )}
       {appState === "processing" && <AgentDebate />}
       {appState === "complete" && (
         <ResultsDashboard
