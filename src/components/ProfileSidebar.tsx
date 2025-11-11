@@ -92,10 +92,17 @@ export const ProfileSidebar = ({ user, displayName }: ProfileSidebarProps) => {
           <User className="w-5 h-5" />
           <span>Profile</span>
         </Link>
-        <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-foreground/80 hover:bg-accent hover:text-foreground transition-colors">
+        <Link
+          to="/settings"
+          className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+            isActive("/settings")
+              ? "bg-accent text-foreground font-medium"
+              : "text-foreground/80 hover:bg-accent hover:text-foreground"
+          }`}
+        >
           <Settings className="w-5 h-5" />
           <span>Settings</span>
-        </button>
+        </Link>
       </nav>
 
       {/* Sign Out Button */}
