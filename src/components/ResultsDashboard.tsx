@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
-import { ThumbsUp, ThumbsDown, Bookmark, History, Sparkles } from "lucide-react";
+import { ThumbsUp, ThumbsDown, Bookmark, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
+import { Link } from "react-router-dom";
 
 interface Evidence {
   title: string;
@@ -78,15 +79,19 @@ export const ResultsDashboard = ({ data, onReset }: ResultsDashboardProps) => {
           </div>
 
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" className="text-foreground/80">
-              <History className="w-4 h-4 mr-2" />
-              History
+            <Button variant="ghost" size="sm" className="text-foreground/80" asChild>
+              <Link to="/saved">
+                <Bookmark className="w-4 h-4 mr-2" />
+                Saved Results
+              </Link>
             </Button>
-            <Avatar className="w-9 h-9">
-              <AvatarFallback className="bg-gradient-to-br from-primary to-official text-white text-sm">
-                U
-              </AvatarFallback>
-            </Avatar>
+            <Link to="/profile">
+              <Avatar className="w-9 h-9 cursor-pointer hover:opacity-80 transition-opacity">
+                <AvatarFallback className="bg-gradient-to-br from-primary to-official text-white text-sm">
+                  U
+                </AvatarFallback>
+              </Avatar>
+            </Link>
           </div>
         </div>
       </header>
