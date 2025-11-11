@@ -91,7 +91,10 @@ export const Header = () => {
                   </div>
                 </div>
                 <DropdownMenuSeparator className="bg-border" />
-                <DropdownMenuItem className="text-foreground hover:bg-accent cursor-pointer">
+                <DropdownMenuItem 
+                  onClick={() => navigate("/profile")}
+                  className="text-foreground hover:bg-accent cursor-pointer"
+                >
                   <UserIcon className="mr-2 h-4 w-4" />
                   Profile
                 </DropdownMenuItem>
