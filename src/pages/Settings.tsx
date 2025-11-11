@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useTheme } from "@/contexts/ThemeContext";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Shield, Sliders, Brain, Eye, Sun, Moon, Info } from "lucide-react";
@@ -26,13 +27,12 @@ import {
 export default function Settings() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { theme, setTheme, language, setLanguage } = useTheme();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [profileData, setProfileData] = useState<any>({});
   
   // Settings state
-  const [themeMode, setThemeMode] = useState<"light" | "dark">("dark");
-  const [language, setLanguage] = useState("english");
   const [aiModel, setAiModel] = useState("auto");
   const [explanationDetail, setExplanationDetail] = useState("detailed");
   const [showConfidence, setShowConfidence] = useState(true);
@@ -156,24 +156,24 @@ export default function Settings() {
                   <div className="space-y-3">
                     <Label className="text-foreground">Theme Mode</Label>
                     <div className="flex items-center gap-3 p-4 rounded-lg bg-background/50 border border-border/30">
-                      <Sun className="w-5 h-5 text-muted-foreground" />
+                      <Sun className={`w-5 h-5 ${theme === "light" ? "text-foreground" : "text-muted-foreground"}`} />
                       <Switch
-                        checked={themeMode === "dark"}
+                        checked={theme === "dark"}
                         onCheckedChange={(checked) =>
-                          setThemeMode(checked ? "dark" : "light")
+                          setTheme(checked ? "dark" : "light")
                         }
                         className="data-[state=checked]:bg-primary"
                       />
-                      <Moon className="w-5 h-5 text-foreground" />
+                      <Moon className={`w-5 h-5 ${theme === "dark" ? "text-foreground" : "text-muted-foreground"}`} />
                     </div>
                   </div>
 
                   {/* Language Selection */}
                   <div className="space-y-3">
                     <Label className="text-foreground">Language Selection</Label>
-                    <Select value={language} onValueChange={setLanguage}>
+                    <Select value={language} onValueChange={(value: any) => setLanguage(value)}>
                       <SelectTrigger className="bg-background/50 border-border/30 text-foreground">
-                        <SelectValue />
+                        <SelectValue placeholder="Select language" />
                       </SelectTrigger>
                       <SelectContent className="bg-card border-border z-50">
                         <SelectItem value="english">English</SelectItem>
