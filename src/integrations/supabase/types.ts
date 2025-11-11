@@ -47,6 +47,39 @@ export type Database = {
         }
         Relationships: []
       }
+      saved_fact_checks: {
+        Row: {
+          claim: string
+          confidence_level: number
+          created_at: string
+          full_data: Json | null
+          id: string
+          updated_at: string
+          user_id: string
+          verdict: string
+        }
+        Insert: {
+          claim: string
+          confidence_level: number
+          created_at?: string
+          full_data?: Json | null
+          id?: string
+          updated_at?: string
+          user_id: string
+          verdict: string
+        }
+        Update: {
+          claim?: string
+          confidence_level?: number
+          created_at?: string
+          full_data?: Json | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+          verdict?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
