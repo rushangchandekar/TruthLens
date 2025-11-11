@@ -84,7 +84,7 @@ const ForgotPassword = () => {
                 <Button 
                   type="submit"
                   disabled={isLoading}
-                  className="w-full h-12 bg-gradient-to-r from-official via-primary to-social hover:opacity-90 text-white font-medium text-base"
+                  className="w-full h-12 bg-gradient-to-r from-primary to-official hover:opacity-90 text-white font-medium text-base"
                 >
                   {isLoading ? "Sending..." : "Reset Password"}
                 </Button>
