@@ -11,7 +11,7 @@ TruthLens solves this by:
 2.  **Debating Nuance:** Agents "debate" under strict rules. If evidence is insufficient, the system admits uncertainty.
 3.  **Providing Context:** We don't just give a "True/False" verdict. We provide **Partially True**, **Unverified**, or **Inconclusive** ratings, complete with confidence scores and full explanations.
 
-## 的核心 Features (Core Features)
+## Features (Core Features)
 
 * **Dual-Stream Analysis:** Simultaneously analyzes **Official Evidence** (research papers, govt docs) and **Viral Perception** (social posts, reels).
 * **Hallucination-Proof by Design:** A strict **"Cite-or-Discard"** policy and a `Critic` agent reject any claim that is not backed by a retrieved citation.
