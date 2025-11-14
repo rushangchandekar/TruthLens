@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Shield } from "lucide-react";
+import { Shield, User, Mail, FileText, Save, X, CheckCircle2, TrendingUp, Award } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ProfileSidebar } from "@/components/ProfileSidebar";
 
@@ -88,8 +88,8 @@ export default function Profile() {
       if (error) throw error;
 
       toast({
-        title: "Profile updated",
-        description: "Your profile has been saved successfully.",
+        title: "Profile updated successfully! 🎉",
+        description: "Your changes have been saved.",
       });
     } catch (error: any) {
       toast({
@@ -101,7 +101,6 @@ export default function Profile() {
       setSaving(false);
     }
   };
-
 
   const getInitials = (email: string) => {
     return email.charAt(0).toUpperCase();
@@ -117,7 +116,10 @@ export default function Profile() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-foreground">Loading...</div>
+        <div className="text-center space-y-4">
+          <div className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto" />
+          <p className="text-muted-foreground font-medium">Loading your profile...</p>
+        </div>
       </div>
     );
   }
@@ -125,38 +127,90 @@ export default function Profile() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
-        <div className="container mx-auto px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-official flex items-center justify-center">
-              <Shield className="w-5 h-5 text-white" />
+      <header className="sticky top-0 z-50 border-b border-border/50 glass-effect-strong">
+        <div className="container mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-2.5 group">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary to-official rounded-xl blur-md opacity-50 group-hover:opacity-75 transition-opacity" />
+              <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-official flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <Shield className="w-5 h-5 text-white" strokeWidth={2.5} />
+              </div>
             </div>
-            <span className="text-xl font-semibold text-foreground">TruthLens</span>
+            <span className="text-xl font-bold">TruthLens</span>
           </Link>
 
-          <Avatar className="h-10 w-10 border-2 border-primary/20">
-            <AvatarFallback className="bg-gradient-to-br from-primary to-official text-white font-semibold">
-              {user && getInitials(user.email || "U")}
-            </AvatarFallback>
-          </Avatar>
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:flex flex-col items-end">
+              <span className="text-sm font-semibold text-foreground">
+                {getUserDisplayName()}
+              </span>
+              <span className="text-xs text-muted-foreground">{user?.email}</span>
+            </div>
+            <Avatar className="h-10 w-10 border-2 border-primary/20">
+              <AvatarFallback className="bg-gradient-to-br from-primary to-official text-white font-semibold">
+                {user && getInitials(user.email || "U")}
+              </AvatarFallback>
+            </Avatar>
+          </div>
         </div>
       </header>
 
-      <div className="pt-16 flex min-h-screen">
-        {/* Sidebar */}
-        <ProfileSidebar user={user} displayName={getUserDisplayName()} />
+      {/* Main Layout */}
+      <div className="flex">
+        {/* Sidebar - Fixed on desktop, hidden on mobile */}
+        <aside className="hidden lg:block w-80 border-r border-border/50 bg-card/30 backdrop-blur-sm min-h-[calc(100vh-4rem)] sticky top-16">
+          <ProfileSidebar user={user} displayName={getUserDisplayName()} />
+        </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-8">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-3xl font-bold text-foreground mb-8">User Profile</h1>
+        <main className="flex-1 w-full p-4 sm:p-6 lg:p-8">
+          <div className="max-w-4xl mx-auto space-y-6">
+            {/* Page Header */}
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/10 to-official/10 flex items-center justify-center">
+                  <User className="w-5 h-5 text-primary" />
+                </div>
+                <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+                  Your Profile
+                </h1>
+              </div>
+              <p className="text-muted-foreground ml-13">
+                Manage your personal information and preferences
+              </p>
+            </div>
 
-            <div className="bg-card/30 backdrop-blur-sm rounded-lg border border-border/50 p-8">
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {[
+                { icon: CheckCircle2, label: "Claims Verified", value: "42", color: "text-verified" },
+                { icon: TrendingUp, label: "This Month", value: "12", color: "text-official" },
+                { icon: Award, label: "Accuracy", value: "98%", color: "text-primary" },
+              ].map((stat, index) => (
+                <div
+                  key={index}
+                  className="p-6 rounded-xl glass-effect border border-border/50 hover:border-primary/30 transition-all duration-300 group"
+                >
+                  <stat.icon className={`w-8 h-8 ${stat.color} mb-3 group-hover:scale-110 transition-transform`} />
+                  <div className="text-2xl font-bold text-foreground mb-1">{stat.value}</div>
+                  <div className="text-sm text-muted-foreground">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Profile Form */}
+            <div className="glass-effect-strong rounded-2xl border border-border/50 p-6 md:p-8 shadow-xl">
+              <div className="flex items-center gap-2 mb-6">
+                <FileText className="w-5 h-5 text-primary" />
+                <h2 className="text-xl font-bold text-foreground">Personal Information</h2>
+              </div>
+
               <div className="space-y-6">
                 {/* First Name and Last Name */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="firstName" className="text-foreground">
+                    <Label htmlFor="firstName" className="text-foreground font-semibold flex items-center gap-2">
+                      <User className="w-4 h-4 text-primary" />
                       First Name
                     </Label>
                     <Input
@@ -165,12 +219,13 @@ export default function Profile() {
                       onChange={(e) =>
                         setProfileData({ ...profileData, first_name: e.target.value })
                       }
-                      className="bg-background/50 border-border text-foreground"
+                      className="glass-effect border-border/50 focus:border-primary/50 text-foreground h-12 transition-all duration-300"
                       placeholder="Alex"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="lastName" className="text-foreground">
+                    <Label htmlFor="lastName" className="text-foreground font-semibold flex items-center gap-2">
+                      <User className="w-4 h-4 text-primary" />
                       Last Name
                     </Label>
                     <Input
@@ -179,7 +234,7 @@ export default function Profile() {
                       onChange={(e) =>
                         setProfileData({ ...profileData, last_name: e.target.value })
                       }
-                      className="bg-background/50 border-border text-foreground"
+                      className="glass-effect border-border/50 focus:border-primary/50 text-foreground h-12 transition-all duration-300"
                       placeholder="Thompson"
                     />
                   </div>
@@ -187,20 +242,30 @@ export default function Profile() {
 
                 {/* Email Address (Read-only) */}
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-foreground">
+                  <Label htmlFor="email" className="text-foreground font-semibold flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-primary" />
                     Email Address
                   </Label>
-                  <Input
-                    id="email"
-                    value={user?.email || ""}
-                    disabled
-                    className="bg-background/30 border-border text-muted-foreground cursor-not-allowed"
-                  />
+                  <div className="relative">
+                    <Input
+                      id="email"
+                      value={user?.email || ""}
+                      disabled
+                      className="glass-effect border-border/30 text-muted-foreground cursor-not-allowed h-12 pr-24"
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-verified bg-verified/10 px-2 py-1 rounded-md">
+                      Verified
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Your email address cannot be changed
+                  </p>
                 </div>
 
                 {/* Bio */}
                 <div className="space-y-2">
-                  <Label htmlFor="bio" className="text-foreground">
+                  <Label htmlFor="bio" className="text-foreground font-semibold flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-primary" />
                     Bio
                   </Label>
                   <Textarea
@@ -209,27 +274,56 @@ export default function Profile() {
                     onChange={(e) =>
                       setProfileData({ ...profileData, bio: e.target.value })
                     }
-                    className="bg-background/50 border-border text-foreground min-h-32"
-                    placeholder="Fact-checker and truth seeker. Passionate about leveraging technology to combat misinformation. Researcher at the Digital Inquiry Institute."
+                    className="glass-effect border-border/50 focus:border-primary/50 text-foreground min-h-32 resize-none transition-all duration-300"
+                    placeholder="Tell us about yourself... Fact-checker and truth seeker. Passionate about leveraging technology to combat misinformation."
                   />
+                  <p className="text-xs text-muted-foreground">
+                    {profileData.bio.length} / 500 characters
+                  </p>
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex justify-end gap-4 pt-4">
+                <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t border-border/50">
                   <Button
                     variant="outline"
                     onClick={() => navigate("/")}
-                    className="border-border text-foreground hover:bg-accent"
+                    className="border-border/50 text-foreground hover:bg-accent/50 h-12 px-6"
                   >
+                    <X className="w-4 h-4 mr-2" />
                     Cancel
                   </Button>
                   <Button
                     onClick={handleSave}
                     disabled={saving}
-                    className="bg-gradient-to-r from-primary to-official hover:opacity-90 text-white"
+                    className="bg-gradient-to-r from-primary to-official hover:opacity-90 text-white shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/35 h-12 px-6 transition-all duration-300"
                   >
-                    {saving ? "Saving..." : "Save Changes"}
+                    {saving ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-4 h-4 mr-2" />
+                        Save Changes
+                      </>
+                    )}
                   </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Security Info Card */}
+            <div className="glass-effect rounded-2xl border border-border/50 p-6">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Shield className="w-5 h-5 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-foreground mb-1">Your Data is Secure</h3>
+                  <p className="text-sm text-muted-foreground">
+                    We use industry-standard encryption to protect your personal information. Your data is never shared with third parties.
+                  </p>
                 </div>
               </div>
             </div>

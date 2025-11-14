@@ -6,6 +6,7 @@ import { Testimonials } from "@/components/Testimonials";
 import { Footer } from "@/components/Footer";
 import { AgentDebate } from "@/components/AgentDebate";
 import { ResultsDashboard } from "@/components/ResultsDashboard";
+import { HowItWorks } from "@/components/HowItWorks";
 
 type AppState = "idle" | "processing" | "complete";
 
@@ -74,6 +75,7 @@ const Index = () => {
           <Header />
           <Hero onInvestigate={handleInvestigate} />
           <Features />
+          <HowItWorks />
           <Testimonials />
           <Footer />
         </>

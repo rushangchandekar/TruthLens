@@ -42,77 +42,96 @@ export const ProfileSidebar = ({ user, displayName }: ProfileSidebarProps) => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <aside className="w-80 border-r border-border/50 bg-card/30 backdrop-blur-sm p-6 flex flex-col">
+    <div className="w-full h-full p-6 flex flex-col">
       {/* User Info */}
       <div className="flex flex-col items-center mb-8">
-        <div className="relative mb-4">
-          <Avatar className="h-24 w-24 border-4 border-primary/20">
+        <div className="relative mb-4 group">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary to-official rounded-full blur-md opacity-50 group-hover:opacity-75 transition-opacity" />
+          <Avatar className="relative h-24 w-24 border-4 border-background ring-2 ring-primary/20">
             <AvatarFallback className="bg-gradient-to-br from-primary to-official text-white font-semibold text-2xl">
               {user && getInitials(user.email || "U")}
             </AvatarFallback>
           </Avatar>
-          <div className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-official flex items-center justify-center border-2 border-background cursor-pointer">
+          <div className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-gradient-to-br from-official to-official/80 flex items-center justify-center border-2 border-background cursor-pointer hover:scale-110 transition-transform shadow-lg">
             <Pencil className="w-4 h-4 text-white" />
           </div>
         </div>
-        <h2 className="text-xl font-semibold text-foreground mb-1">
+        <h2 className="text-xl font-bold text-foreground mb-1 text-center">
           {displayName}
         </h2>
-        <p className="text-sm text-muted-foreground">{user?.email}</p>
+        <p className="text-sm text-muted-foreground text-center">{user?.email}</p>
       </div>
 
       {/* Navigation Menu */}
       <nav className="flex-1 space-y-2">
         <Link 
           to="/"
-          className="flex items-center gap-3 px-4 py-3 rounded-lg text-foreground/80 hover:bg-accent hover:text-foreground transition-colors"
+          className="flex items-center gap-3 px-4 py-3 rounded-xl text-foreground/80 hover:bg-accent/50 hover:text-foreground transition-all duration-200 group"
         >
-          <PlusCircle className="w-5 h-5" />
-          <span>New Claim</span>
+          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+            <PlusCircle className="w-5 h-5 text-primary" />
+          </div>
+          <span className="font-medium">New Claim</span>
         </Link>
         <Link
           to="/saved"
-          className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+          className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
             isActive("/saved")
-              ? "bg-accent text-foreground font-medium"
-              : "text-foreground/80 hover:bg-accent hover:text-foreground"
+              ? "bg-primary/10 text-foreground font-semibold"
+              : "text-foreground/80 hover:bg-accent/50 hover:text-foreground"
           }`}
         >
-          <Bookmark className="w-5 h-5" />
-          <span>Saved Results</span>
+          <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
+            isActive("/saved") ? "bg-primary/20" : "bg-accent/30 group-hover:bg-accent/50"
+          }`}>
+            <Bookmark className="w-5 h-5 text-primary" />
+          </div>
+          <span className="font-medium">Saved Results</span>
         </Link>
         <Link
           to="/profile"
-          className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+          className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
             isActive("/profile")
-              ? "bg-accent text-foreground font-medium"
-              : "text-foreground/80 hover:bg-accent hover:text-foreground"
+              ? "bg-primary/10 text-foreground font-semibold"
+              : "text-foreground/80 hover:bg-accent/50 hover:text-foreground"
           }`}
         >
-          <User className="w-5 h-5" />
-          <span>Profile</span>
+          <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
+            isActive("/profile") ? "bg-primary/20" : "bg-accent/30 group-hover:bg-accent/50"
+          }`}>
+            <User className="w-5 h-5 text-primary" />
+          </div>
+          <span className="font-medium">Profile</span>
         </Link>
         <Link
           to="/settings"
-          className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+          className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
             isActive("/settings")
-              ? "bg-accent text-foreground font-medium"
-              : "text-foreground/80 hover:bg-accent hover:text-foreground"
+              ? "bg-primary/10 text-foreground font-semibold"
+              : "text-foreground/80 hover:bg-accent/50 hover:text-foreground"
           }`}
         >
-          <Settings className="w-5 h-5" />
-          <span>Settings</span>
+          <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
+            isActive("/settings") ? "bg-primary/20" : "bg-accent/30 group-hover:bg-accent/50"
+          }`}>
+            <Settings className="w-5 h-5 text-primary" />
+          </div>
+          <span className="font-medium">Settings</span>
         </Link>
       </nav>
 
       {/* Sign Out Button */}
-      <button
-        onClick={handleSignOut}
-        className="flex items-center gap-3 px-4 py-3 rounded-lg text-foreground/80 hover:bg-accent hover:text-foreground transition-colors mt-4 border-t border-border/50 pt-6"
-      >
-        <LogOut className="w-5 h-5" />
-        <span>Log Out</span>
-      </button>
-    </aside>
+      <div className="border-t border-border/50 pt-6 mt-4">
+        <button
+          onClick={handleSignOut}
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-destructive hover:bg-destructive/10 transition-all duration-200 group"
+        >
+          <div className="w-10 h-10 rounded-lg bg-destructive/10 flex items-center justify-center group-hover:bg-destructive/20 transition-colors">
+            <LogOut className="w-5 h-5" />
+          </div>
+          <span className="font-medium">Log Out</span>
+        </button>
+      </div>
+    </div>
   );
 };
