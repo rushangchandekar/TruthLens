@@ -121,12 +121,12 @@ export const AgentDebate = ({ pubsubChannel }: AgentDebateProps = {}) => {
     const agentInterval = setInterval(() => {
       setActiveAgent((prev) => {
         const next = (prev + 1) % agents.length;
-        
+
         // Mark previous agent as completed
         if (!completedAgents.includes(prev)) {
           setCompletedAgents(current => [...current, prev]);
         }
-        
+
         // Add log entry when agent becomes active
         const newLog: LogEntry = {
           id: `${Date.now()}-${next}`,
@@ -136,7 +136,7 @@ export const AgentDebate = ({ pubsubChannel }: AgentDebateProps = {}) => {
           type: 'info'
         };
         setLogs(current => [...current.slice(-19), newLog]);
-        
+
         return next;
       });
     }, 2000);
@@ -145,7 +145,7 @@ export const AgentDebate = ({ pubsubChannel }: AgentDebateProps = {}) => {
     const messageInterval = setInterval(() => {
       setMessageIndex((prev) => {
         const next = (prev + 1) % agents[activeAgent].messages.length;
-        
+
         // Add log for each message
         const newLog: LogEntry = {
           id: `${Date.now()}-msg`,
@@ -155,7 +155,7 @@ export const AgentDebate = ({ pubsubChannel }: AgentDebateProps = {}) => {
           type: 'info'
         };
         setLogs(current => [...current.slice(-19), newLog]); // Keep last 20 logs
-        
+
         return next;
       });
     }, 1500);
@@ -179,15 +179,12 @@ export const AgentDebate = ({ pubsubChannel }: AgentDebateProps = {}) => {
   const ActiveAgentIcon = agents[activeAgent].icon;
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 bg-background relative overflow-hidden">
-      {/* Animated Background Orbs */}
-      <div className="absolute top-20 left-10 w-96 h-96 gradient-orb gradient-orb-primary opacity-20 animate-float" />
-      <div className="absolute bottom-20 right-10 w-96 h-96 gradient-orb gradient-orb-official opacity-20 animate-float" style={{ animationDelay: '2s' }} />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] gradient-orb gradient-orb-social opacity-10 animate-float" style={{ animationDelay: '4s' }} />
+    <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 bg-transparent relative overflow-hidden">
+      {/* Global background from Index.tsx is used here */}
 
       <div className="max-w-6xl w-full space-y-8 md:space-y-12 relative z-10">
         {/* Header */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center space-y-4"
@@ -198,7 +195,7 @@ export const AgentDebate = ({ pubsubChannel }: AgentDebateProps = {}) => {
               AI Analysis in Progress
             </span>
           </div>
-          
+
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground">
             Analyzing Your Claim
           </h2>
@@ -233,8 +230,8 @@ export const AgentDebate = ({ pubsubChannel }: AgentDebateProps = {}) => {
                 {/* Card */}
                 <div className={cn(
                   "relative glass-effect rounded-2xl p-6 border-2 transition-all duration-500",
-                  isActive 
-                    ? `${agent.borderColor} shadow-2xl ${agent.glowColor} scale-105` 
+                  isActive
+                    ? `${agent.borderColor} shadow-2xl ${agent.glowColor} scale-105`
                     : "border-border/30 hover:border-border/50"
                 )}>
                   {/* Status Badge */}
@@ -261,7 +258,7 @@ export const AgentDebate = ({ pubsubChannel }: AgentDebateProps = {}) => {
 
                   {/* Icon */}
                   <div className="flex justify-center mb-4">
-                    <motion.div 
+                    <motion.div
                       animate={isActive ? { scale: [1, 1.1, 1] } : {}}
                       transition={{ duration: 1, repeat: isActive ? Infinity : 0 }}
                       className={cn(

@@ -14,6 +14,7 @@ import { User } from "@supabase/supabase-js";
 import { signOut } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { LogOut, User as UserIcon, Menu, X, Shield } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const Header = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -36,7 +37,7 @@ export const Header = () => {
     };
 
     window.addEventListener("scroll", handleScroll);
-    
+
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
@@ -89,11 +90,10 @@ export const Header = () => {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
             ? "glass-effect-strong border-b border-border/50 shadow-lg"
             : "bg-background/60 backdrop-blur-md border-b border-border/30"
-        }`}
+          }`}
       >
         <div className="container-custom h-16 md:h-20 flex items-center justify-between">
           {/* Logo */}
@@ -128,6 +128,11 @@ export const Header = () => {
 
           {/* Desktop Auth Buttons / User Menu */}
           <div className="hidden md:flex items-center gap-3">
+            {/* Theme Toggle */}
+            <div className="mr-2">
+              <ThemeToggle />
+            </div>
+
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -194,6 +199,11 @@ export const Header = () => {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center gap-2">
+            {/* Theme Toggle Mobile */}
+            <div className="mr-1 scale-75">
+              <ThemeToggle />
+            </div>
+
             {user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -228,7 +238,7 @@ export const Header = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
-            
+
             <Button
               variant="ghost"
               size="icon"
