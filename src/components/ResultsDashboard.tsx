@@ -223,33 +223,31 @@ export const ResultsDashboard = ({ data, onReset }: ResultsDashboardProps) => {
       <div className="container mx-auto px-4 sm:px-6 py-8 max-w-7xl space-y-8 pt-24">
         {/* Claim Card */}
         {/* Claim Card */}
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.1 }}
-          className="bg-card/40 backdrop-blur-sm border border-border/50 rounded-2xl p-6 md:p-8"
-        >
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-3">
-                <FileText className="w-5 h-5 text-primary" />
-                <span className="text-sm font-semibold text-muted-foreground uppercase">
-                  Analyzed Claim
-                </span>
+        <div className="animate-fade-in-up opacity-0" style={{ animationDelay: "0.1s" }}>
+          <div className="bg-card/40 backdrop-blur-sm border border-border/50 rounded-2xl p-6 md:p-8 shadow-lg">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-3">
+                  <FileText className="w-5 h-5 text-primary" />
+                  <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                    Analyzed Claim
+                  </span>
+                </div>
+                <h1 className="text-2xl md:text-3xl font-bold text-foreground font-heading leading-tight">
+                  "{data.query}"
+                </h1>
               </div>
-              <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-                "{data.query}"
-              </h1>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleSave}
+                className="hover:bg-primary/10 hover:text-primary transition-colors"
+              >
+                <Bookmark className={cn("w-5 h-5", isSaved && "fill-current text-primary")} />
+              </Button>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleSave}
-            >
-              <Bookmark className={cn("w-5 h-5", isSaved && "fill-current text-primary")} />
-            </Button>
           </div>
-        </motion.div>
+        </div>
 
         {/* Verdict Section */}
         <motion.div

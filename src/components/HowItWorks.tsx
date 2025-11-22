@@ -42,20 +42,17 @@ export const HowItWorks = () => {
   const ctaAnimation = useScrollAnimation(0.3);
 
   return (
-    <section id="how-it-works" className="section-padding relative overflow-hidden bg-muted/30">
-      {/* Background Elements */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-transparent to-background pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] gradient-orb gradient-orb-primary opacity-5" />
+    <section id="how-it-works" className="section-padding relative overflow-hidden">
+      {/* Background Elements - Removed to blend with global background */}
 
       <div className="container-custom relative z-10">
         {/* Section Header - Animated */}
-        <div 
+        <div
           ref={headerAnimation.ref}
-          className={`text-center mb-16 md:mb-20 space-y-6 transition-all duration-700 ${
-            headerAnimation.isVisible 
-              ? 'opacity-100 translate-y-0' 
+          className={`text-center mb-16 md:mb-20 space-y-6 transition-all duration-700 ${headerAnimation.isVisible
+              ? 'opacity-100 translate-y-0'
               : 'opacity-0 translate-y-10'
-          }`}
+            }`}
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-effect border border-border/50 mb-4">
             <Brain className="w-4 h-4 text-primary" />
@@ -70,15 +67,15 @@ export const HowItWorks = () => {
             <br className="hidden sm:block" />
             in 4 Simple Steps
           </h2>
-          
+
           <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4">
-            Our AI-powered system works behind the scenes to deliver accurate, 
+            Our AI-powered system works behind the scenes to deliver accurate,
             evidence-based verification in real-time
           </p>
         </div>
 
         {/* Steps - Animated */}
-        <div 
+        <div
           ref={stepsAnimation.ref}
           className="relative max-w-6xl mx-auto"
         >
@@ -89,13 +86,12 @@ export const HowItWorks = () => {
             {steps.map((step, index) => (
               <div
                 key={step.number}
-                className={`relative group transition-all duration-700 ${
-                  stepsAnimation.isVisible 
-                    ? 'opacity-100 translate-y-0' 
+                className={`relative group transition-all duration-700 ${stepsAnimation.isVisible
+                    ? 'opacity-100 translate-y-0'
                     : 'opacity-0 translate-y-10'
-                }`}
-                style={{ 
-                  transitionDelay: stepsAnimation.isVisible ? `${index * 150}ms` : '0ms' 
+                  }`}
+                style={{
+                  transitionDelay: stepsAnimation.isVisible ? `${index * 150}ms` : '0ms'
                 }}
               >
                 {/* Card */}
@@ -114,7 +110,7 @@ export const HowItWorks = () => {
                   <h3 className="text-xl font-bold text-foreground mb-3">
                     {step.title}
                   </h3>
-                  
+
                   <p className="text-sm text-muted-foreground leading-relaxed mb-4">
                     {step.description}
                   </p>

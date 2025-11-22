@@ -82,9 +82,11 @@ const Index = () => {
         {appState === "idle" && (
           <>
             <Header />
-            <Hero onInvestigate={handleInvestigate} />
-            <Features />
-            <HowItWorks />
+            <div className="space-y-24 pb-24">
+              <Hero onInvestigate={handleInvestigate} />
+              <Features />
+              <HowItWorks />
+            </div>
             <Footer />
           </>
         )}
