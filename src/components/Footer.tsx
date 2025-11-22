@@ -242,7 +242,7 @@ export const Footer = () => {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             {/* Copyright */}
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>© 2024 TruthLens.</span>
+              <span>© 2025 TruthLens.</span>
               <span className="hidden sm:inline">•</span>
               <span className="flex items-center gap-1">
                 Made with <Heart className="w-3 h-3 text-red-500 fill-red-500" /> for truth seekers

@@ -85,7 +85,6 @@ const Index = () => {
             <Hero onInvestigate={handleInvestigate} />
             <Features />
             <HowItWorks />
-            <Testimonials />
             <Footer />
           </>
         )}
