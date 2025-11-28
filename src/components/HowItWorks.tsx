@@ -14,7 +14,7 @@ const steps = [
     number: "02",
     icon: Brain,
     title: "AI Agents Analyze",
-    description: "12+ specialized AI agents work in parallel, checking facts across 50+ trusted sources.",
+    description: "AI agents work in sequential, checking facts across 50+ trusted sources.",
     color: "from-primary/20 to-primary/5",
     iconColor: "text-primary"
   },

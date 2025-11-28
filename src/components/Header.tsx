@@ -27,7 +27,6 @@ export const Header = () => {
   const navItems = [
     { name: "Features", href: "#features" },
     { name: "How it Works", href: "#how-it-works" },
-    { name: "Testimonials", href: "#testimonials" },
   ];
 
   useEffect(() => {

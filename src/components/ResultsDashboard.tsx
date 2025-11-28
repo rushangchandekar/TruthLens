@@ -222,7 +222,6 @@ export const ResultsDashboard = ({ data, onReset }: ResultsDashboardProps) => {
 
       <div className="container mx-auto px-4 sm:px-6 py-8 max-w-7xl space-y-8 pt-24">
         {/* Claim Card */}
-        {/* Claim Card */}
         <div className="animate-fade-in-up opacity-0" style={{ animationDelay: "0.1s" }}>
           <div className="bg-card/40 backdrop-blur-sm border border-border/50 rounded-2xl p-6 md:p-8 shadow-lg">
             <div className="flex items-start justify-between gap-4">
