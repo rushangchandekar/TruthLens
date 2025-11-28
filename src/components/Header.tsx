@@ -13,7 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { signOut } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
-import { LogOut, User as UserIcon, Menu, X, Shield } from "lucide-react";
+import { LogOut, User as UserIcon, Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const Header = () => {
@@ -91,8 +91,8 @@ export const Header = () => {
     <>
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-            ? "glass-effect-strong border-b border-border/50 shadow-lg"
-            : "bg-background/60 backdrop-blur-md border-b border-border/30"
+          ? "glass-effect-strong border-b border-border/50 shadow-lg"
+          : "bg-background/60 backdrop-blur-md border-b border-border/30"
           }`}
       >
         <div className="container-custom h-16 md:h-20 flex items-center justify-between">
@@ -105,7 +105,7 @@ export const Header = () => {
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-br from-primary to-official rounded-xl blur-md opacity-50 group-hover:opacity-75 transition-opacity"></div>
               <div className="relative w-9 h-9 md:w-10 md:h-10 rounded-xl bg-gradient-to-br from-primary to-official flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <Shield className="w-5 h-5 md:w-6 md:h-6 text-white" strokeWidth={2.5} />
+                <img src="/logo.png" alt="TruthLens" className="w-full h-full object-cover rounded-xl" />
               </div>
             </div>
             <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text">
