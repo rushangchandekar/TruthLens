@@ -4,12 +4,15 @@ import { Button } from "@/components/ui/button";
 import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
 import { HeroOrbit } from "@/components/HeroOrbit";
 
+
 interface HeroProps {
   onInvestigate: (claim: string) => void;
 }
 
 export const Hero = ({ onInvestigate }: HeroProps) => {
   const [query, setQuery] = useState("");
+  const [wordCount, setWordCount] = useState(0);
+  const MAX_WORDS = 250;
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   // Example claims for quick testing
@@ -25,6 +28,20 @@ export const Hero = ({ onInvestigate }: HeroProps) => {
       onInvestigate(query);
       // Note: Loading state will be managed by parent component
       setTimeout(() => setIsAnalyzing(false), 1000);
+    }
+  };
+
+
+
+  {/* Add this function to handle input change */ }
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const text = e.target.value;
+    const words = text.trim() ? text.trim().split(/\s+/) : [];
+
+    // Only update if within limit
+    if (words.length <= MAX_WORDS) {
+      setQuery(text);
+      setWordCount(words.length);
     }
   };
 
@@ -56,27 +73,42 @@ export const Hero = ({ onInvestigate }: HeroProps) => {
           <div className="w-full max-w-xl animate-fade-in-up opacity-0" style={{ animationDelay: "0.3s" }}>
             <div className="relative group">
               <div className="absolute -inset-0.5 bg-gradient-to-r from-primary to-social rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500" />
-              <div className="relative flex items-center bg-card/80 backdrop-blur-xl border border-white/10 rounded-2xl p-2 shadow-2xl">
-                <Search className="w-6 h-6 text-muted-foreground ml-3" />
-                <input
-                  type="text"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleAnalyze()}
-                  placeholder="Paste a URL or type a claim..."
-                  className="flex-1 bg-transparent border-none focus:ring-0 text-foreground placeholder:text-muted-foreground/50 px-4 py-3 text-lg"
-                />
-                <Button
-                  onClick={handleAnalyze}
-                  disabled={!query.trim() || isAnalyzing}
-                  className="btn-primary rounded-xl px-6 py-6 text-base shadow-lg shadow-primary/25"
-                >
-                  {isAnalyzing ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                  ) : (
-                    <ArrowRight className="w-5 h-5" />
-                  )}
-                </Button>
+              <div className="relative flex flex-col bg-card/80 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl">
+                {/* Input Row */}
+                <div className="flex items-center p-2">
+                  <Search className="w-6 h-6 text-muted-foreground ml-3" />
+                  <input
+                    type="text"
+                    value={query}
+                    onChange={handleInputChange}
+                    onKeyDown={(e) => e.key === "Enter" && handleAnalyze()}
+                    placeholder="Paste a URL or type a claim..."
+                    className="flex-1 bg-transparent border-none outline-none focus:outline-none focus:ring-0 text-foreground placeholder:text-muted-foreground/50 px-4 py-3 text-lg"
+                  />
+                  <Button
+                    onClick={handleAnalyze}
+                    disabled={!query.trim() || isAnalyzing}
+                    className="btn-primary rounded-xl px-6 py-6 text-base shadow-lg shadow-primary/25"
+                  >
+                    {isAnalyzing ? (
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <ArrowRight className="w-5 h-5" />
+                    )}
+                  </Button>
+                </div>
+
+                {/* Word Counter */}
+                <div className="flex justify-end px-4 pb-2">
+                  <span className={`text-xs ${wordCount >= MAX_WORDS
+                    ? "text-red-500"
+                    : wordCount >= MAX_WORDS * 0.8
+                      ? "text-yellow-500"
+                      : "text-muted-foreground"
+                    }`}>
+                    {wordCount}/{MAX_WORDS} words
+                  </span>
+                </div>
               </div>
             </div>
 
