@@ -1,24 +1,25 @@
-# backend/main.py - Add port 8080 to allowed origins
+import os
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import vertexai
-from vertexai.generative_models import GenerativeModel
-import re
+import httpx
+from dotenv import load_dotenv
 
-# --- CONFIGURATION ---
-PROJECT_ID = "truthlens-478007"
-LOCATION = "us-central1"
+# Load env variables from .env
+load_dotenv()
+
+# Configuration - Default local n8n webhook URL
+N8N_WEBHOOK_URL = os.getenv("N8N_WEBHOOK_URL", "http://localhost:5678/webhook/truthlens-factcheck")
 
 app = FastAPI()
 
-# CORS - ADD PORT 8080
+# CORS Configuration - allow ports for React app
 origins = [
     "http://localhost:5173",
-    "http://localhost:8080",  # ← ADDED THIS
+    "http://localhost:8080",
     "http://localhost:3000",
     "http://127.0.0.1:5173",
-    "http://127.0.0.1:8080",  # ← AND THIS
+    "http://127.0.0.1:8080",
 ]
 
 app.add_middleware(
@@ -29,157 +30,68 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize Vertex AI
-print("🔧 Initializing Vertex AI...")
-try:
-    vertexai.init(project=PROJECT_ID, location=LOCATION)
-    model = GenerativeModel("gemini-2.5-flash")
-    print("✅ Vertex AI initialized")
-except Exception as e:
-    print(f"⚠️  Warning: {e}")
-    model = None
-
 class QueryRequest(BaseModel):
     claim: str
 
-PROMPT_TEMPLATE = """You are TruthLens, an expert fact-checking AI agent.
-
-Analyze this claim: "{claim}"
-
-Provide your response in this exact format:
-
-VERDICT: [True/False/Partially True/Unverified]
-CONFIDENCE SCORE: [0-100%]
-EXPLANATION: [Provide 2-3 sentences explaining your analysis]
-OFFICIAL SOURCES: [List atleast 2-3 reliable sources separated by |]
-SOCIAL SOURCES: [List atleast 2 social media platforms where this is discussed, separated by |]
-
-Be specific and factual.
-"""
-
-def parse_agent_response(response_text: str, claim: str):
-    verdict = "Unverified"
-    confidence = "50%"
-    explanation = "Analysis in progress..."
-    official_sources = []
-    social_sources = []
-    
-    try:
-        # Extract verdict
-        verdict_match = re.search(r'VERDICT:\s*(.+?)(?:\n|$)', response_text, re.IGNORECASE)
-        if verdict_match:
-            verdict = verdict_match.group(1).strip()
-        
-        # Extract confidence
-        confidence_match = re.search(r'CONFIDENCE SCORE:\s*(\d+%?)', response_text, re.IGNORECASE)
-        if confidence_match:
-            confidence = confidence_match.group(1).strip()
-            if not confidence.endswith('%'):
-                confidence += '%'
-        
-        # Extract explanation
-        explanation_match = re.search(r'EXPLANATION:\s*(.+?)(?:\n|OFFICIAL|SOCIAL|$)', response_text, re.IGNORECASE | re.DOTALL)
-        if explanation_match:
-            explanation = explanation_match.group(1).strip()
-        
-        # Extract official sources
-        official_match = re.search(r'OFFICIAL SOURCES:\s*(.+?)(?:\n|SOCIAL|$)', response_text, re.IGNORECASE)
-        if official_match:
-            sources = [s.strip() for s in official_match.group(1).split('|') if s.strip()]
-            official_sources = [
-                {
-                    "title": source,
-                    "type": "Official",
-                    "snippet": f"Recommended for verification"
-                }
-                for source in sources[:3]
-            ]
-        
-        # Extract social sources
-        social_match = re.search(r'SOCIAL SOURCES:\s*(.+?)$', response_text, re.IGNORECASE | re.DOTALL)
-        if social_match:
-            sources = [s.strip() for s in social_match.group(1).split('|') if s.strip()]
-            social_sources = [
-                {
-                    "title": source,
-                    "type": "Social",
-                    "snippet": f"Public discussion platform"
-                }
-                for source in sources[:3]
-            ]
-        
-        # Defaults if not found
-        if not official_sources:
-            official_sources = [
-                {"title": "Academic Database", "type": "Official", "snippet": "Peer-reviewed sources"}
-            ]
-        
-        if not social_sources:
-            social_sources = [
-                {"title": "Social Media", "type": "Social", "snippet": "Public discussions"}
-            ]
-            
-    except Exception as e:
-        print(f"Parse error: {e}")
-    
-    return {
-        "verdict": verdict,
-        "confidence": confidence,
-        "explanation": explanation,
-        "official_sources": official_sources,
-        "social_sources": social_sources
-    }
-
 @app.get("/health")
 def health_check():
-    return {"status": "healthy"}
+    return {"status": "healthy", "provider": "n8n"}
 
 @app.post("/api/debating")
 async def run_debate(request: QueryRequest):
+    print(f"\n📝 Claim received: {request.claim}")
+    print(f"📡 Forwarding to n8n Webhook: {N8N_WEBHOOK_URL}")
+    
     try:
-        print(f"\n📝 Claim: {request.claim}")
-        
-        if model is None:
-            raise HTTPException(status_code=503, detail="AI model not initialized")
-        
-        # Generate prompt
-        prompt = PROMPT_TEMPLATE.format(claim=request.claim)
-        
-        # Query model
-        print("🤖 Querying AI...")
-        response = model.generate_content(prompt)
-        output = response.text
-        
-        print(f"✅ Response received: {output[:100]}...")
-        
-        # Parse response
-        parsed = parse_agent_response(output, request.claim)
-        
-        result = {
-            "status": "complete",
-            "query": request.claim,
-            "verdict": parsed["verdict"],
-            "confidence_level": parsed["confidence"],
-            "synthesis_explanation": parsed["explanation"],
-            "debate_rounds": 2,
-            "agent_output": output,
-            "evidence": {
-                "official": parsed["official_sources"],
-                "social": parsed["social_sources"]
-            }
-        }
-        
-        print(f"✅ Verdict: {result['verdict']}")
-        return result
-        
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                N8N_WEBHOOK_URL,
+                json={"claim": request.claim},
+                timeout=60.0  # Generous timeout for AI agent processing
+            )
+            
+            if response.status_code != 200:
+                print(f"❌ n8n returned error status: {response.status_code}")
+                print(f"📄 Response body: {response.text}")
+                raise HTTPException(
+                    status_code=502, 
+                    detail=f"n8n workflow error (Status {response.status_code})"
+                )
+            
+            try:
+                result = response.json()
+            except ValueError as e:
+                print(f"❌ Failed to decode JSON from n8n. Raw response:\n{response.text}")
+                raise HTTPException(
+                    status_code=502, 
+                    detail=f"n8n returned a non-JSON response. Raw text: {response.text[:200]}"
+                )
+            
+            # If n8n returns a list/array of items (n8n's default format), extract the first item
+            if isinstance(result, list):
+                if len(result) > 0:
+                    result = result[0]
+                else:
+                    raise HTTPException(
+                        status_code=502, 
+                        detail="n8n workflow returned an empty list"
+                    )
+            
+            print(f"✅ Success! Verdict: {result.get('verdict')}")
+            return result
+            
+    except httpx.RequestError as e:
+        print(f"❌ Failed to connect to n8n: {e}")
+        raise HTTPException(
+            status_code=503, 
+            detail="Could not reach n8n workflow server. Please ensure n8n is running."
+        )
     except Exception as e:
-        print(f"❌ Error: {e}")
-        import traceback
-        traceback.print_exc()
+        print(f"❌ Unexpected Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     import uvicorn
     print("🚀 Starting TruthLens API on http://localhost:8000")
-    print("📡 CORS enabled for ports: 5173, 8080, 3000")
+    print(f"📡 Routing agent requests to n8n: {N8N_WEBHOOK_URL}")
     uvicorn.run(app, host="0.0.0.0", port=8000)
