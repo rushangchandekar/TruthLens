@@ -1,77 +1,76 @@
 # 🛡️ TruthLens: The Multi-Agent Fact-Checking System
 
-**TruthLens** is a next-generation, AI-powered system designed to verify claims and fight misinformation. It is not a single AI model but a multi-agent system that orchestrates a "debate" between specialized agents to provide nuanced, evidence-grounded answers.
+**TruthLens** is an AI-powered system designed to verify claims and fight misinformation. It is not a single AI model but a visual multi-agent workflow orchestrated in **n8n** that runs fact-checking logic to provide nuanced, evidence-grounded answers.
 
-## 🚀 The Problem
-In an era of rampant misinformation, AI hallucinations, and viral social media narratives, it's incredibly difficult to separate fact from perception. Traditional fact-checkers are often too slow, and individual AI models can "hallucinate" or provide binary answers that miss crucial context.
+---
 
-## ✨ Our Solution
-TruthLens solves this by:
-1.  **Grounding Everything in Evidence:** All agent outputs *must* be grounded in retrieved evidence.
-2.  **Debating Nuance:** Agents "debate" under strict rules. If evidence is insufficient, the system admits uncertainty.
-3.  **Providing Context:** We don't just give a "True/False" verdict. We provide **Partially True**, **Unverified**, or **Inconclusive** ratings, complete with confidence scores and full explanations.
+## 📂 Project Structure
 
-## Features (Core Features)
+The repository is organized into a clean multi-tier structure:
 
-* **Dual-Stream Analysis:** Simultaneously analyzes **Official Evidence** (research papers, govt docs) and **Viral Perception** (social posts, reels).
-* **Hallucination-Proof by Design:** A strict **"Cite-or-Discard"** policy and a `Critic` agent reject any claim that is not backed by a retrieved citation.
-* **Loop-Safe Debates:** A `Moderator` agent controls the debate flow, capping iterations (max 3 rounds) to prevent infinite loops and ensure a fast verdict.
-* **Full Transparency:** The final output is fully transparent, showing the verdict, confidence level, a human-readable explanation, and all sources used.
+*   **`backend/`**: A lightweight Python FastAPI backend that proxies frontend requests to the n8n agent.
+*   **`frontend/`**: A modern React + Tailwind CSS client dashboard powered by Vite.
 
-## ⚙️ How It Works: The Agentic Architecture
-
-TruthLens uses a team of specialized agents to find the truth:
-
-1.  **`Fact-Finder`**: Collects hard evidence from trusted sources like government docs and research papers.
-2.  **`Pattern Detector`**: Scrapes viral content (reels, social posts) to identify repeated public narratives.
-3.  **`Verifier`**: Cross-checks claims and marks them as **Supported**, **Refuted**, or **Unverified**.
-4.  **`Counterpoint`**: Looks for missing context or alternative perspectives (e.g., "This is true, *but*...").
-5.  **`Critic`**: Acts as an internal police, rejecting hallucinations and ensuring all reasoning is based purely on cited evidence.
-6.  **`Moderator`**: Controls the debate, enforces a 3-round max, and calls the final verdict if the debate is deadlocked.
-7.  **`Explainer`**: Synthesizes all findings into the final, human-readable summary for the user.
+---
 
 ## 🛠️ Tech Stack
 
-This project is built using a modern, scalable stack as defined in the system blueprint:
-
 | Component | Technology | Purpose |
 | :--- | :--- | :--- |
-| **Frontend** | React + Tailwind CSS  | User interface and results dashboard |
-| **Backend** | FastAPI  | API for agent orchestration |
-| **Agent Orchestration** | Vertex AI Agent Builder / LangChain  | Managing the multi-agent debate logic |
-| **LLMs** | Gemini / GPT / LLAMA | Reasoning engine for agents |
-| **Database** | Pinecone / Weaviate | Vector DB for knowledge retrieval |
-| **Data Retrieval** | Govt APIs, News APIs, Social Scraping | Populating the knowledge base |
+| **Frontend** | React (Vite) + Tailwind CSS | Interactive user interface & results dashboard |
+| **Backend** | FastAPI (Python) | API gateway & proxy for agent orchestration |
+| **Agent Orchestration** | **n8n Workflow** | Managing the multi-agent debate logic and tool execution |
+| **LLMs** | Google Gemini (via AI Studio free tier) | Reasoning engine for fact-checking agents |
 
-## 🚀 Getting Started (Frontend)
+---
 
-To run the frontend demonstration client:
+## ⚙️ Getting Started
 
-1.  **Clone the repository:**
+### 1. n8n AI Agent Setup
+1.  Start n8n on your local machine:
     ```bash
-    git clone [https://github.com/](https://github.com/)[your-repo]/truthlens.git
+    npx n8n
     ```
+2.  Open your browser to `http://localhost:5678` and create a new workflow.
+3.  Import the n8n JSON canvas file from your project artifacts.
+4.  Get a free Gemini API Key from [Google AI Studio](https://aistudio.google.com/).
+5.  Link your API Key inside the **Call Gemini API** node, and toggle the workflow to **Active** (in the top-right corner).
 
-2.  **Navigate to the frontend directory:**
+### 2. Backend Setup
+1.  Navigate to the `backend/` folder:
     ```bash
-    cd truthlens/frontend
+    cd backend
     ```
+2.  Install dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
+3.  Start the FastAPI server:
+    ```bash
+    python main.py
+    ```
+    The API will be available at `http://localhost:8000`.
 
-3.  **Install dependencies:**
+### 3. Frontend Setup
+1.  Navigate to the `frontend/` folder:
+    ```bash
+    cd frontend
+    ```
+2.  Install dependencies:
     ```bash
     npm install
     ```
-
-4.  **Run the development server:**
+3.  Run the Vite development server:
     ```bash
-    npm run start
+    npm run dev
     ```
-    The application will be available at `http://localhost:3000`.
+    The application will be available at `http://localhost:5173`.
+
+---
 
 ## 🕹️ How to Use
 
-1.  Open the TruthLens dashboard.
-2.  Enter a claim you want to verify (e.g., *"E20 damages your engine"* ).
-3.  Press "Investigate" and watch as the agents (Fact-Finder, Verifier, etc.) activate in real-time.
-4.  After the debate (max 3 rounds), review the final verdict, confidence score, and the synthesized explanation.
-5.  Check the "Official Evidence" and "Social Perception" columns to see the sources that informed the AI's conclusion.
+1.  Open the TruthLens dashboard at `http://localhost:5173`.
+2.  Enter a claim you want to verify (e.g., *"E20 fuel damages car engines"*).
+3.  Press "Investigate" and watch the API route the query to your visual n8n dashboard.
+4.  Review the final verdict (e.g., **Verified**, **False**, or **Unverified**), confidence score, synthesized explanation, and sourced references.
