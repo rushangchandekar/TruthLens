@@ -13,13 +13,14 @@ N8N_WEBHOOK_URL = os.getenv("N8N_WEBHOOK_URL", "http://localhost:5678/webhook/tr
 
 app = FastAPI()
 
-# CORS Configuration - allow ports for React app
+# CORS Configuration - allow ports for React app and Vercel production deployment
 origins = [
     "http://localhost:5173",
     "http://localhost:8080",
     "http://localhost:3000",
     "http://127.0.0.1:5173",
     "http://127.0.0.1:8080",
+    "https://truthlens-frontend-beta.vercel.app",  # Added Vercel live URL
 ]
 
 app.add_middleware(
